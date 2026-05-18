@@ -7,6 +7,10 @@ from tools.rental_tool import get_rental_data
 from tools.ncu_area_tool import normalize_ncu_area
 from tools.commute_tool import analyze_commute_to_ncu
 from tools.checklist_tool import generate_smart_checklist
+from tools.gemini_summary_tool import (
+    generate_area_summary_with_gemini,
+    generate_listing_summary_with_gemini
+)
 
 def summarize_area(location, weather, air_quality, commute, transport, facilities, rental):
     """
@@ -493,6 +497,7 @@ def decide_suitable_student_type(listing, area_analysis, rent_evaluation):
     return "適合正在尋找中央大學周邊一般學生租屋選項的找房者。"
 
 
+
 def analyze_listing(listing):
     """
     真正的房源 AI 分析主入口。
@@ -554,6 +559,26 @@ def analyze_listing(listing):
         f"{area_analysis['commute']['summary']}"
         f"整體來看，{suitable_student_type}"
     )
+    
+    # 先建立規則式分析結果
+    listing_analysis = {
+        "area_analysis": area_analysis,
+        "rent_evaluation": rent_evaluation,
+        "strengths": strengths,
+        "risks": risks,
+        "questions": questions,
+        "smart_checklist": smart_checklist,
+        "suitable_student_type": suitable_student_type,
+        "final_summary": final_summary
+    }
+
+    # 使用 Gemini 對整間房源做自然語言分析
+    gemini_listing_summary = generate_listing_summary_with_gemini(
+        listing=listing,
+        listing_analysis=listing_analysis
+    )
+
+    listing_analysis["gemini_summary"] = gemini_listing_summary
 
     return {
         "area_analysis": area_analysis,
@@ -565,3 +590,4 @@ def analyze_listing(listing):
         "final_summary": final_summary,
         "smart_checklist": smart_checklist
     }
+

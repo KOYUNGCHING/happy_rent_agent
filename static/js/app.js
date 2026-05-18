@@ -36,7 +36,14 @@ async function analyzeArea() {
         document.getElementById("loading").classList.add("hidden");
     }
 }
+const summarySource = document.getElementById("summarySource");
 
+if (summarySource) {
+    summarySource.textContent =
+        data.gemini_summary && data.gemini_summary.enabled
+            ? `摘要來源：${data.gemini_summary.source}`
+            : "摘要來源：Rule-based fallback";
+}
 function renderResult(data) {
     document.getElementById("resultSection").classList.remove("hidden");
 
@@ -69,8 +76,15 @@ function renderResult(data) {
     document.getElementById("airSummary").textContent =
         data.air_quality.summary;
 
-    document.getElementById("aiSummary").textContent =
-        data.ai_analysis.summary;
+    // 優先顯示 Gemini Summary Agent 的結果
+    // 如果 Gemini 沒有啟用或 API 失敗，就使用原本規則式摘要
+    if (data.gemini_summary && data.gemini_summary.enabled) {
+        document.getElementById("aiSummary").textContent =
+            data.gemini_summary.summary_text;
+    } else {
+        document.getElementById("aiSummary").textContent =
+            data.ai_analysis.summary;
+    }
     document.getElementById("coordinateText").textContent =
         `座標：${data.location.latitude}, ${data.location.longitude}`;
     // 顯示天氣資訊

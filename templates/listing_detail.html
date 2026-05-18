@@ -157,7 +157,20 @@
                 <!-- AI 分析總結 -->
                 <div class="analysis-panel">
                     <h2>AI 整體判斷</h2>
-                    <p>{{ listing_analysis.final_summary }}</p>
+
+                    {% if listing_analysis.gemini_summary and listing_analysis.gemini_summary.enabled %}
+                        <div class="markdown-like-text">
+                            {{ listing_analysis.gemini_summary.summary_text }}
+                        </div>
+                        <p class="source-text">
+                            摘要來源：{{ listing_analysis.gemini_summary.source }}
+                        </p>
+                    {% else %}
+                        <p>{{ listing_analysis.final_summary }}</p>
+                        <p class="source-text">
+                            摘要來源：Rule-based fallback
+                        </p>
+                    {% endif %}
                 </div>
 
                 <!-- AI 分析卡片 -->

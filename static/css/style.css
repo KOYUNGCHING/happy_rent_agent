@@ -1217,3 +1217,9 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+
+.markdown-like-text {
+    white-space: pre-line;
+    line-height: 1.8;
+    color: #334155;
+}
