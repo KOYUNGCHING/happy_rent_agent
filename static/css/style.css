@@ -709,3 +709,161 @@ h1 {
         grid-template-columns: 1fr;
     }
 }
+/* ============================================================
+   New Listing Form 房東上架頁
+   ============================================================ */
+
+.form-hero {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.form-hero h1 {
+    color: #0f172a;
+    font-size: 38px;
+    margin: 12px 0;
+}
+
+.form-hero p {
+    color: #475569;
+    line-height: 1.8;
+    max-width: 760px;
+}
+
+.error-box {
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 16px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.listing-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-section {
+    background: white;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.form-section h2 {
+    margin-top: 0;
+    color: #0f172a;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    font-weight: 800;
+    color: #334155;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 13px 14px;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.wide-field {
+    grid-column: span 2;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.checkbox-item {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 14px;
+    color: #334155;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-item input {
+    width: 16px;
+    height: 16px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 60px;
+}
+
+.cancel-link {
+    text-decoration: none;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.submit-button {
+    border: none;
+    border-radius: 14px;
+    padding: 14px 22px;
+    background: #172554;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background: #1d4ed8;
+}
+
+@media (max-width: 800px) {
+    .form-grid,
+    .checkbox-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .wide-field {
+        grid-column: span 1;
+    }
+
+    .form-actions {
+        justify-content: stretch;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .submit-button,
+    .cancel-link {
+        text-align: center;
+    }
+}

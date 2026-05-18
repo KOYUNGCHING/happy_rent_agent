@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 讓網頁在手機上也可以正常縮放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>房東上架房源 | Happy Rent Agent</title>
+
+    <!-- 使用共用 CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- 導覽列 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            Happy Rent Agent
+        </div>
+
+        <div class="nav-links">
+            <a href="/">AI 分析</a>
+            <a href="/listings">找房源</a>
+            <a href="/landlord/new">房東上架</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 頁面標題 -->
+        <section class="form-hero">
+            <p class="tag dark-tag">Landlord Portal</p>
+            <h1>上架空房間</h1>
+            <p>
+                房東可以在這裡新增中央大學周邊房源。
+                找房者之後可以在房源列表中查看，並使用 AI Agent 分析到校便利性與租金合理性。
+            </p>
+        </section>
+
+        <!-- 如果後端傳入 error，就顯示錯誤訊息 -->
+        {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- 新增房源表單 -->
+        <!-- method="POST" 代表送出後會把資料送回 /landlord/new -->
+        <form class="listing-form" method="POST" action="/landlord/new">
+
+            <!-- 房源基本資訊 -->
+            <section class="form-section">
+                <h2>房源基本資訊</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">房源名稱 *</label>
+                        <input
+                            id="title"
+                            name="title"
+                            type="text"
+                            placeholder="例如：中央後門溫馨套房"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="area">地區 *</label>
+                        <input
+                            id="area"
+                            name="area"
+                            type="text"
+                            placeholder="例如：中央後門、中壢車站、青埔"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group wide-field">
+                        <label for="address">地址 / 位置描述 *</label>
+                        <input
+                            id="address"
+                            name="address"
+                            type="text"
+                            placeholder="例如：桃園市中壢區國立中央大學後門附近"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="room_type">房型 *</label>
+                        <select id="room_type" name="room_type" required>
+                            <option value="">請選擇房型</option>
+                            <option value="雅房">雅房</option>
+                            <option value="分租套房">分租套房</option>
+                            <option value="獨立套房">獨立套房</option>
+                            <option value="整層合租">整層合租</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rent">月租金 *</label>
+                        <input
+                            id="rent"
+                            name="rent"
+                            type="number"
+                            placeholder="例如：8500"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deposit">押金</label>
+                        <input
+                            id="deposit"
+                            name="deposit"
+                            type="number"
+                            placeholder="例如：17000"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="size">坪數</label>
+                        <input
+                            id="size"
+                            name="size"
+                            type="text"
+                            placeholder="例如：7 坪"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="floor">樓層</label>
+                        <input
+                            id="floor"
+                            name="floor"
+                            type="text"
+                            placeholder="例如：3F"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 房源設備 -->
+            <section class="form-section">
+                <h2>房源設備與條件</h2>
+
+                <div class="checkbox-grid">
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="has_window" checked>
+                        有對外窗
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="can_cook">
+                        可開伙
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="pet_allowed">
+                        可養寵物
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input type="checkbox" name="internet_included" checked>
+                        包網路
+                    </label>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="water_fee">水費</label>
+                        <input
+                            id="water_fee"
+                            name="water_fee"
+                            type="text"
+                            placeholder="例如：包水 / 每月 200 元"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="electricity_fee">電費</label>
+                        <input
+                            id="electricity_fee"
+                            name="electricity_fee"
+                            type="text"
+                            placeholder="例如：每度 5 元 / 依台電計價"
+                        >
+                    </div>
+
+                    <div class="form-group wide-field">
+                        <label for="image_url">房源圖片 URL</label>
+                        <input
+                            id="image_url"
+                            name="image_url"
+                            type="text"
+                            placeholder="可以先貼圖片網址，之後再做圖片上傳"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 房源描述 -->
+            <section class="form-section">
+                <h2>房源描述</h2>
+
+                <div class="form-group">
+                    <label for="description">描述</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="5"
+                        placeholder="例如：近中央大學後門，生活機能方便，適合學生。"
+                    ></textarea>
+                </div>
+            </section>
+
+            <!-- 聯絡資訊 -->
+            <section class="form-section">
+                <h2>聯絡資訊</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="contact_name">聯絡人</label>
+                        <input
+                            id="contact_name"
+                            name="contact_name"
+                            type="text"
+                            placeholder="例如：王先生"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_phone">聯絡電話</label>
+                        <input
+                            id="contact_phone"
+                            name="contact_phone"
+                            type="text"
+                            placeholder="例如：0912-345-678"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 送出按鈕 -->
+            <div class="form-actions">
+                <a href="/listings" class="cancel-link">取消</a>
+                <button type="submit" class="submit-button">
+                    上架房源
+                </button>
+            </div>
+
+        </form>
+
+    </main>
+
+</body>
+</html>

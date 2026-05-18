@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from agent_service import run_agent, chat_with_agent
 from database import get_db_connection
 
@@ -95,6 +95,137 @@ def listing_detail(listing_id):
         listing=listing_data,
         ai_result=ai_result
     )
+
+@app.route("/landlord/new", methods=["GET", "POST"])
+def new_listing():
+    """
+    房東新增房源頁。
+
+    這個 route 同時處理兩種情況：
+
+    1. GET request：
+       使用者第一次打開 /landlord/new
+       → 顯示新增房源表單
+
+    2. POST request：
+       使用者填完表單並送出
+       → 從 request.form 取得表單資料
+       → 寫入 SQLite listings table
+       → 導回 /listings 房源列表頁
+    """
+
+    # 如果是 GET，代表只是要顯示表單頁面
+    if request.method == "GET":
+        return render_template("new_listing.html")
+
+    # 從表單取得基本文字欄位
+    title = request.form.get("title", "").strip()
+    area = request.form.get("area", "").strip()
+    address = request.form.get("address", "").strip()
+    room_type = request.form.get("room_type", "").strip()
+
+    # 租金與押金是數字欄位
+    # 如果使用者沒有填押金，就先設成 0
+    rent = int(request.form.get("rent", 0))
+    deposit = int(request.form.get("deposit", 0) or 0)
+
+    # 房間細節
+    size = request.form.get("size", "").strip()
+    floor = request.form.get("floor", "").strip()
+
+    # checkbox 如果有勾選，request.form 會收到 "on"
+    # 如果沒勾選，request.form.get() 會是 None
+    # 所以這裡用 == "on" 判斷，再轉成 1 或 0 存進資料庫
+    has_window = 1 if request.form.get("has_window") == "on" else 0
+    can_cook = 1 if request.form.get("can_cook") == "on" else 0
+    pet_allowed = 1 if request.form.get("pet_allowed") == "on" else 0
+    internet_included = 1 if request.form.get("internet_included") == "on" else 0
+
+    # 費用與描述
+    water_fee = request.form.get("water_fee", "").strip()
+    electricity_fee = request.form.get("electricity_fee", "").strip()
+    description = request.form.get("description", "").strip()
+
+    # 聯絡資訊
+    contact_name = request.form.get("contact_name", "").strip()
+    contact_phone = request.form.get("contact_phone", "").strip()
+
+    # 目前 MVP 先用圖片 URL，不處理圖片上傳
+    # 之後可以升級成上傳圖片到 static/uploads
+    image_url = request.form.get("image_url", "").strip()
+
+    # 如果房東沒有填圖片，給一張預設圖
+    if not image_url:
+        image_url = "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"
+
+
+    if not title or not area or not address or not room_type or rent <= 0:
+        return render_template(
+            "new_listing.html",
+            error="請填寫房源名稱、地區、地址、房型與租金。"
+        )
+
+    conn = get_db_connection()
+
+    # 目前還沒有正式登入系統，所以 landlord_id 先用 1
+    # 之後做登入後，會改成 session["user_id"]
+    landlord_id = 1
+
+    conn.execute("""
+        INSERT INTO listings (
+            landlord_id,
+            title,
+            area,
+            address,
+            room_type,
+            rent,
+            deposit,
+            size,
+            floor,
+            has_window,
+            can_cook,
+            pet_allowed,
+            water_fee,
+            electricity_fee,
+            internet_included,
+            description,
+            contact_name,
+            contact_phone,
+            image_url,
+            status
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        landlord_id,
+        title,
+        area,
+        address,
+        room_type,
+        rent,
+        deposit,
+        size,
+        floor,
+        has_window,
+        can_cook,
+        pet_allowed,
+        water_fee,
+        electricity_fee,
+        internet_included,
+        description,
+        contact_name,
+        contact_phone,
+        image_url,
+        "available"
+    ))
+
+    # commit 代表真的把新增房源存進資料庫
+    conn.commit()
+
+    # 關閉資料庫連線
+    conn.close()
+
+    # 新增成功後，導回房源列表頁
+    return redirect(url_for("listings"))
 
 
 @app.route("/api/analyze", methods=["POST"])
