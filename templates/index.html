@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing Area Insight Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header class="hero">
+        <div class="hero-content">
+            <p class="tag">AI Rental Area Analysis</p>
+            <h1>Housing Area Insight Agent</h1>
+            <p class="subtitle">
+                輸入想租屋的地點，AI Agent 會整合交通、租金、生活機能、天氣與空氣品質，
+                幫助你快速判斷這個地區是否適合居住。
+            </p>
+
+            <div class="search-box">
+                <input id="locationInput" type="text" placeholder="例如：我想在台北車站附近租房子">
+                <button onclick="analyzeArea()">開始分析</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="loading" class="loading hidden">
+            AI Agent 正在分析中...
+        </section>
+
+        <section id="resultSection" class="hidden">
+            <h2 id="resultTitle">地區分析結果</h2>
+
+            <div class="cards">
+                <div class="card">
+                    <p class="card-label">交通便利性</p>
+                    <h3 id="transportScore">--</h3>
+                    <p id="transportSummary">--</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">生活機能</p>
+                    <h3 id="facilityScore">--</h3>
+                    <p id="facilitySummary">--</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">租金等級</p>
+                    <h3 id="rentalLevel">--</h3>
+                    <p id="rentalSummary">--</p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">空氣品質</p>
+                    <h3 id="airQuality">--</h3>
+                    <p id="airSummary">--</p>
+                </div>
+            </div>
+
+            <section class="analysis-panel">
+                <h2>AI 地區摘要</h2>
+                <p id="aiSummary"></p>
+            </section>
+
+            <section class="details-grid">
+                <div class="detail-card">
+                    <h3>天氣資訊</h3>
+                    <p id="weatherInfo"></p>
+                </div>
+
+                <div class="detail-card">
+                    <h3>租金資訊</h3>
+                    <p id="rentalInfo"></p>
+                </div>
+
+                <div class="detail-card">
+                    <h3>優點</h3>
+                    <ul id="prosList"></ul>
+                </div>
+
+                <div class="detail-card">
+                    <h3>可能缺點</h3>
+                    <ul id="consList"></ul>
+                </div>
+
+                <div class="detail-card wide">
+                    <h3>適合族群</h3>
+                    <ul id="suitableList"></ul>
+                </div>
+
+                <div class="detail-card wide">
+                    <h3>整體建議</h3>
+                    <p id="suggestion"></p>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <section class="chatbot">
+        <div class="chat-header">
+            <strong>AI 租屋助理</strong>
+            <span>Beta</span>
+        </div>
+
+        <div id="chatMessages" class="chat-messages">
+            <div class="bot-message">
+                你好！你可以先輸入地點進行分析，或問我「看房要注意什麼？」。
+            </div>
+        </div>
+
+        <div class="chat-input">
+            <input id="chatInput" type="text" placeholder="輸入問題...">
+            <button onclick="sendChat()">送出</button>
+        </div>
+    </section>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
