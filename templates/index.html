@@ -9,15 +9,14 @@
 <body>
     <header class="hero">
         <div class="hero-content">
-            <p class="tag">AI Rental Area Analysis</p>
-            <h1>Housing Area Insight Agent</h1>
+            <p class="tag">AI Housing Assistant for NCU Students</p>
+            <h1>Happy Rent Agent</h1>
             <p class="subtitle">
-                輸入想租屋的地點，AI Agent 會整合交通、租金、生活機能、天氣與空氣品質，
-                幫助你快速判斷這個地區是否適合居住。
+                輸入中央大學周邊想租屋的地點，AI Agent 會整合到校便利性、租金負擔、學生生活機能、天氣與空氣品質，幫助你快速判斷這個區域是否適合居住。
             </p>
 
             <div class="search-box">
-                <input id="locationInput" type="text" placeholder="例如：我想在台北車站附近租房子">
+                <input id="locationInput" type="text" placeholder="例如：我想找中央大學後門附近租屋">
                 <button onclick="analyzeArea()">開始分析</button>
             </div>
         </div>
@@ -33,9 +32,9 @@
 
             <div class="cards">
                 <div class="card">
-                    <p class="card-label">交通便利性</p>
-                    <h3 id="transportScore">--</h3>
-                    <p id="transportSummary">--</p>
+                    <p class="card-label">到校便利性</p>
+                    <h3 id="commuteScore">--</h3>
+                    <p id="commuteSummary">--</p>
                 </div>
 
                 <div class="card">
@@ -45,7 +44,7 @@
                 </div>
 
                 <div class="card">
-                    <p class="card-label">租金等級</p>
+                    <p class="card-label">租金負擔</p>
                     <h3 id="rentalLevel">--</h3>
                     <p id="rentalSummary">--</p>
                 </div>
@@ -60,9 +59,13 @@
             <section class="analysis-panel">
                 <h2>AI 地區摘要</h2>
                 <p id="aiSummary"></p>
+                <p class="coordinate-text" id="coordinateText"></p>
             </section>
-
             <section class="details-grid">
+                <div class="detail-card">
+                    <h3>到校方式估算</h3>
+                    <p id="commuteInfo"></p>
+                </div>
                 <div class="detail-card">
                     <h3>天氣資訊</h3>
                     <p id="weatherInfo"></p>
@@ -104,7 +107,7 @@
 
         <div id="chatMessages" class="chat-messages">
             <div class="bot-message">
-                你好！你可以先輸入地點進行分析，或問我「看房要注意什麼？」。
+                你好！我是中央大學租屋萬事通。你可以問我「中央大學後門附近適合租屋嗎？」或「看房要注意什麼？」。
             </div>
         </div>
 

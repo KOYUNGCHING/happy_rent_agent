@@ -43,11 +43,14 @@ function renderResult(data) {
     document.getElementById("resultTitle").textContent =
         `${data.location.location_name} 租屋地區分析`;
 
-    document.getElementById("transportScore").textContent =
-        `${data.transport.transport_score} / 100`;
-    document.getElementById("transportSummary").textContent =
-        data.transport.summary;
+    // 顯示到校便利性分數
+    // commute_score 是後端 Commute Tool 根據距離中央大學的遠近計算出來的
+    document.getElementById("commuteScore").textContent =
+        `${data.commute.commute_score} / 100`;
 
+    // 顯示到中央大學的距離與估算通勤時間
+    document.getElementById("commuteSummary").textContent =
+        data.commute.summary;
     document.getElementById("facilityScore").textContent =
         `${data.facilities.facility_score} / 100`;
     document.getElementById("facilitySummary").textContent =
@@ -65,10 +68,15 @@ function renderResult(data) {
 
     document.getElementById("aiSummary").textContent =
         data.ai_analysis.summary;
-
+    document.getElementById("coordinateText").textContent =
+        `座標：${data.location.latitude}, ${data.location.longitude}`;
+    // 顯示天氣資訊
+    // 這裡使用後端 Weather Tool 回傳的真實資料
+    // precipitation 是降雨量，不是降雨機率，所以文字要寫成「降雨量」
     document.getElementById("weatherInfo").textContent =
-        `${data.weather.weather}，溫度 ${data.weather.temperature}，降雨機率 ${data.weather.rain_probability}。${data.weather.summary}`;
-
+        `${data.weather.weather}，溫度 ${data.weather.temperature}，` +
+        `濕度 ${data.weather.humidity}，降雨量 ${data.weather.precipitation}，` +
+        `風速 ${data.weather.wind_speed}。${data.weather.summary}`;
     document.getElementById("rentalInfo").textContent =
         `套房估計：${data.rental.studio_range}；雅房估計：${data.rental.shared_room_range}。${data.rental.summary}`;
 
@@ -78,6 +86,13 @@ function renderResult(data) {
 
     document.getElementById("suggestion").textContent =
         data.ai_analysis.suggestion;
+
+    // 顯示到中央大學的不同通勤方式估算
+    document.getElementById("commuteInfo").textContent =
+        `距離中央大學約 ${data.commute.distance_km} 公里。` +
+        `估計步行約 ${data.commute.walking_minutes} 分鐘，` +
+        `騎腳踏車約 ${data.commute.bike_minutes} 分鐘，` +
+        `騎機車約 ${data.commute.scooter_minutes} 分鐘。`;
 }
 
 function renderList(elementId, items) {

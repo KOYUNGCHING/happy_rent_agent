@@ -17,9 +17,16 @@ def analyze_area():
     if not user_input.strip():
         return jsonify({"error": "Please enter a location."}), 400
 
-    result = run_agent(user_input)
-    return jsonify(result)
+    try:
+        result = run_agent(user_input)
+        return jsonify(result)
 
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+
+    except Exception as e:
+        print("Analyze error:", e)
+        return jsonify({"error": "分析時發生錯誤，請稍後再試。"}), 500
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
