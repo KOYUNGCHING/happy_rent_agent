@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 讓網頁在手機上也能正常縮放 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>找房源 | Happy Rent Agent</title>
+
+    <!-- 使用原本的 CSS，讓整個網站風格一致 -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- 頁面上方導覽列 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            Happy Rent Agent
+        </div>
+
+        <div class="nav-links">
+            <a href="/">AI 分析</a>
+            <a href="/listings">找房源</a>
+            <a href="#">房東上架</a>
+        </div>
+    </nav>
+
+    <!-- 房源列表頁 Hero 區塊 -->
+    <header class="listings-hero">
+        <div>
+            <p class="tag">NCU Student Housing</p>
+            <h1>中央大學附近房源</h1>
+            <p class="subtitle">
+                這裡整理房東上架的中央大學周邊租屋資訊。
+                找房者可以快速查看租金、房型、地區與基本設備，之後也可以搭配 AI Agent 分析到校距離與租金合理性。
+            </p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- 搜尋與篩選區塊，目前先做畫面，下一步再接功能 -->
+        <section class="filter-panel">
+            <div class="filter-group">
+                <label for="keywordInput">關鍵字</label>
+                <input id="keywordInput" type="text" placeholder="例如：後門、套房、中壢">
+            </div>
+
+            <div class="filter-group">
+                <label for="roomTypeFilter">房型</label>
+                <select id="roomTypeFilter">
+                    <option value="">全部房型</option>
+                    <option value="雅房">雅房</option>
+                    <option value="分租套房">分租套房</option>
+                    <option value="獨立套房">獨立套房</option>
+                    <option value="整層合租">整層合租</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="maxRentFilter">最高租金</label>
+                <input id="maxRentFilter" type="number" placeholder="例如：10000">
+            </div>
+
+            <button class="filter-button" onclick="filterListings()">
+                篩選房源
+            </button>
+        </section>
+
+        <!-- 房源數量 -->
+        <section class="listing-count">
+            目前共有 <strong>{{ listings|length }}</strong> 筆可租房源
+        </section>
+
+        <!-- 房源卡片列表 -->
+        <section class="listing-grid" id="listingGrid">
+
+            <!-- 
+                Jinja2 template 迴圈：
+                Flask 會把 listings 傳進來，
+                這裡逐筆產生房源卡片。
+            -->
+            {% for listing in listings %}
+            <article
+                class="listing-card"
+                data-title="{{ listing.title }}"
+                data-area="{{ listing.area }}"
+                data-room-type="{{ listing.room_type }}"
+                data-rent="{{ listing.rent }}"
+            >
+                <!-- 房源圖片 -->
+                <div class="listing-image-wrap">
+                    <img
+                        src="{{ listing.image_url }}"
+                        alt="{{ listing.title }}"
+                        class="listing-image"
+                    >
+                </div>
+
+                <!-- 房源內容 -->
+                <div class="listing-content">
+                    <div class="listing-topline">
+                        <span class="area-badge">{{ listing.area }}</span>
+                        <span class="room-badge">{{ listing.room_type }}</span>
+                    </div>
+
+                    <h2>{{ listing.title }}</h2>
+
+                    <p class="listing-address">
+                        {{ listing.address }}
+                    </p>
+
+                    <p class="listing-rent">
+                        NT$ {{ "{:,}".format(listing.rent) }} / 月
+                    </p>
+
+                    <div class="listing-meta">
+                        <span>{{ listing.size }}</span>
+                        <span>{{ listing.floor }}</span>
+
+                        {% if listing.internet_included %}
+                            <span>含網路</span>
+                        {% else %}
+                            <span>不含網路</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="listing-description">
+                        {{ listing.description }}
+                    </p>
+
+                    <div class="listing-actions">
+                        <a class="primary-link" href="/listings/{{ listing.id }}">
+                            查看詳情
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+
+        </section>
+    </main>
+
+    <!-- 房源列表頁使用的 JS -->
+    <script src="/static/js/listings.js"></script>
+</body>
+</html>
