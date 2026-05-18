@@ -12,7 +12,7 @@ function filterListings() {
       - 適合第一版展示
 
       未來如果資料很多，可以改成：
-      GET /listings?keyword=後門&room_type=獨立套房&max_rent=10000
+      GET /listings?keyword=後門&room_type=獨立套房&max_rent=8000
       讓後端 SQL 直接篩選。
     */
 

@@ -1,13 +1,16 @@
+import os
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from agent_service import run_agent, chat_with_agent, chat_with_agent_gemini, analyze_listing
-from database import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from database import get_db_connection, init_db, seed_sample_data
 app = Flask(__name__)
 # Flask session 需要 secret_key 才能運作
 # session 可以用來記錄目前登入的使用者是誰
 # 注意：正式上線時不要把 secret key 寫死在程式裡，應該放在 .env
-app.secret_key = "happy-rent-dev-secret-key"
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "happy-rent-dev-secret-key")
+init_db()
+
+seed_sample_data()
 
 @app.route("/")
 def home():
