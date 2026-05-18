@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 讓手機版也可以正常顯示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ listing.title }} | Happy Rent Agent</title>
+
+    <!-- 共用全站 CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- 導覽列 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            Happy Rent Agent
+        </div>
+
+        <div class="nav-links">
+            <a href="/">AI 分析</a>
+            <a href="/listings">找房源</a>
+            <a href="#">房東上架</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 回上一頁 -->
+        <div class="back-link-wrap">
+            <a href="/listings" class="back-link">← 回房源列表</a>
+        </div>
+
+        <!-- 房源主資訊區 -->
+        <section class="detail-layout">
+
+            <!-- 左側：房源圖片 -->
+            <div class="detail-image-card">
+                <img
+                    src="{{ listing.image_url }}"
+                    alt="{{ listing.title }}"
+                    class="detail-image"
+                >
+            </div>
+
+            <!-- 右側：房源資訊 -->
+            <div class="detail-info-card">
+                <div class="listing-topline">
+                    <span class="area-badge">{{ listing.area }}</span>
+                    <span class="room-badge">{{ listing.room_type }}</span>
+                </div>
+
+                <h1>{{ listing.title }}</h1>
+
+                <p class="detail-address">
+                    {{ listing.address }}
+                </p>
+
+                <p class="detail-rent">
+                    NT$ {{ "{:,}".format(listing.rent) }} / 月
+                </p>
+
+                <div class="detail-meta-grid">
+                    <div>
+                        <span class="meta-label">押金</span>
+                        <strong>NT$ {{ "{:,}".format(listing.deposit) }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="meta-label">坪數</span>
+                        <strong>{{ listing.size }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="meta-label">樓層</span>
+                        <strong>{{ listing.floor }}</strong>
+                    </div>
+
+                    <div>
+                        <span class="meta-label">狀態</span>
+                        <strong>{{ listing.status }}</strong>
+                    </div>
+                </div>
+
+                <p class="detail-description">
+                    {{ listing.description }}
+                </p>
+
+                <div class="contact-box">
+                    <h3>聯絡資訊</h3>
+                    <p>聯絡人：{{ listing.contact_name }}</p>
+                    <p>電話：{{ listing.contact_phone }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 房源設備 -->
+        <section class="detail-section">
+            <h2>房源設備與條件</h2>
+
+            <div class="feature-grid">
+                <div class="feature-item">
+                    {% if listing.has_window %}
+                        有對外窗
+                    {% else %}
+                        無對外窗
+                    {% endif %}
+                </div>
+
+                <div class="feature-item">
+                    {% if listing.can_cook %}
+                        可開伙
+                    {% else %}
+                        不可開伙
+                    {% endif %}
+                </div>
+
+                <div class="feature-item">
+                    {% if listing.pet_allowed %}
+                        可養寵物
+                    {% else %}
+                        不可養寵物
+                    {% endif %}
+                </div>
+
+                <div class="feature-item">
+                    {% if listing.internet_included %}
+                        包網路
+                    {% else %}
+                        不包網路
+                    {% endif %}
+                </div>
+
+                <div class="feature-item">
+                    水費：{{ listing.water_fee }}
+                </div>
+
+                <div class="feature-item">
+                    電費：{{ listing.electricity_fee }}
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Agent 分析結果 -->
+        <section class="detail-section ai-detail-section">
+            <div class="section-heading-row">
+                <div>
+                    <p class="tag dark-tag">AI Agent Analysis</p>
+                    <h2>AI 房源分析</h2>
+                </div>
+            </div>
+
+            {% if ai_result %}
+
+                <!-- AI 分析卡片 -->
+                <div class="cards detail-ai-cards">
+
+                    <div class="card">
+                        <p class="card-label">到校便利性</p>
+                        <h3>{{ ai_result.commute.commute_score }} / 100</h3>
+                        <p>{{ ai_result.commute.summary }}</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">租金參考</p>
+                        <h3>{{ ai_result.rental.rental_level }}</h3>
+                        <p>{{ ai_result.rental.summary }}</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">天氣</p>
+                        <h3>{{ ai_result.weather.weather }}</h3>
+                        <p>{{ ai_result.weather.summary }}</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">空氣品質</p>
+                        <h3>{{ ai_result.air_quality.level }}</h3>
+                        <p>{{ ai_result.air_quality.summary }}</p>
+                    </div>
+
+                </div>
+
+                <!-- AI 摘要 -->
+                <div class="analysis-panel">
+                    <h2>AI 整體建議</h2>
+                    <p>{{ ai_result.ai_analysis.summary }}</p>
+                    <p>{{ ai_result.ai_analysis.suggestion }}</p>
+                </div>
+
+                <!-- 租金合理性：用房源租金與估算範圍做簡單提醒 -->
+                <div class="detail-card">
+                    <h3>租金合理性提醒</h3>
+                    <p>
+                        此房源租金為
+                        <strong>NT$ {{ "{:,}".format(listing.rent) }} / 月</strong>。
+                        依目前中央大學周邊 MVP 租金資料，
+                        此生活圈分租套房估計約為
+                        <strong>{{ ai_result.rental.studio_range }}</strong>，
+                        獨立套房估計約為
+                        <strong>{{ ai_result.rental.independent_studio_range }}</strong>。
+                    </p>
+                    <p class="source-text">
+                        {{ ai_result.rental.note }}
+                    </p>
+                </div>
+
+            {% else %}
+
+                <div class="analysis-panel">
+                    <h2>AI 分析暫時無法取得</h2>
+                    <p>
+                        目前無法根據此房源地址產生 AI 分析。請稍後再試，或確認地址是否足夠明確。
+                    </p>
+                </div>
+
+            {% endif %}
+        </section>
+
+        <!-- 看房 Checklist -->
+        <section class="detail-section">
+            <h2>看房提醒 Checklist</h2>
+
+            <div class="checklist-grid">
+                <div class="checklist-item">確認實際到中央大學的通勤時間</div>
+                <div class="checklist-item">確認晚上周邊是否安靜與安全</div>
+                <div class="checklist-item">詢問水電費計算方式</div>
+                <div class="checklist-item">確認網路是否包含在租金內</div>
+                <div class="checklist-item">檢查房間採光與通風</div>
+                <div class="checklist-item">確認垃圾處理方式與倒垃圾時間</div>
+                <div class="checklist-item">確認是否可開伙、是否有油煙問題</div>
+                <div class="checklist-item">確認合約期限、押金與退租規則</div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>

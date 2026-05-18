@@ -42,6 +42,61 @@ def listings():
     # 把 listing_list 傳給前端 HTML
     return render_template("listings.html", listings=listing_list)
 
+@app.route("/listings/<int:listing_id>")
+def listing_detail(listing_id):
+    """
+    房源詳細頁。
+
+    這個 route 的任務：
+    1. 根據 listing_id 從 SQLite 找出單一房源
+    2. 如果找不到房源，就回傳 404
+    3. 使用房源地址呼叫 run_agent()
+    4. 把房源資料與 AI 分析結果傳給 listing_detail.html
+    """
+
+    # 建立資料庫連線
+    conn = get_db_connection()
+
+    # 根據房源 id 查詢單一房源
+    listing = conn.execute("""
+        SELECT *
+        FROM listings
+        WHERE id = ?
+    """, (listing_id,)).fetchone()
+
+    # 查詢完就先關閉資料庫連線
+    conn.close()
+
+    # 如果找不到房源，回傳簡單錯誤訊息
+    # 之後可以改成漂亮的 404 頁面
+    if listing is None:
+        return "找不到這筆房源資料", 404
+
+    # 把 sqlite3.Row 轉成 dict，template 比較好使用
+    listing_data = dict(listing)
+
+    # 用房源地址呼叫 AI Agent
+    # 這裡等於讓 Agent 分析「這間房所在的位置」
+    #
+    # 例如：
+    # address = 桃園市中壢區中央大學後門附近
+    # run_agent() 會做：
+    # Geocoding -> Weather -> Commute -> Rental -> Summary
+    try:
+        ai_result = run_agent(listing_data["address"])
+    except Exception as e:
+        # 如果 AI 分析失敗，不要讓整個房源頁壞掉
+        # 先印出錯誤，然後前端顯示資料不足
+        print("Listing AI analysis error:", e)
+        ai_result = None
+
+    return render_template(
+        "listing_detail.html",
+        listing=listing_data,
+        ai_result=ai_result
+    )
+
+
 @app.route("/api/analyze", methods=["POST"])
 def analyze_area():
     data = request.get_json()

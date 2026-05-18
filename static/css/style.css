@@ -507,3 +507,205 @@ h1 {
 .secondary-link:hover {
     background: rgba(255, 255, 255, 0.12);
 }
+/* ============================================================
+   Listing Detail Page 房源詳細頁
+   ============================================================ */
+
+.back-link-wrap {
+    margin-bottom: 20px;
+}
+
+.back-link {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.detail-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.detail-image-card,
+.detail-info-card,
+.detail-section {
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.detail-image-card {
+    overflow: hidden;
+    min-height: 420px;
+}
+
+.detail-image {
+    width: 100%;
+    height: 100%;
+    min-height: 420px;
+    object-fit: cover;
+    display: block;
+}
+
+.detail-info-card {
+    padding: 28px;
+}
+
+.detail-info-card h1 {
+    color: #0f172a;
+    font-size: 34px;
+    margin: 14px 0 12px;
+}
+
+.detail-address {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.detail-rent {
+    font-size: 34px;
+    font-weight: 900;
+    color: #1d4ed8;
+    margin: 24px 0;
+}
+
+.detail-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.detail-meta-grid div {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 14px;
+}
+
+.meta-label {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 6px;
+}
+
+.detail-description {
+    color: #475569;
+    line-height: 1.8;
+}
+
+.contact-box {
+    margin-top: 22px;
+    padding: 18px;
+    background: #eff6ff;
+    border-radius: 18px;
+}
+
+.contact-box h3 {
+    margin-top: 0;
+    color: #172554;
+}
+
+.contact-box p {
+    margin: 8px 0;
+}
+
+.detail-section {
+    padding: 28px;
+    margin-bottom: 28px;
+}
+
+.detail-section h2 {
+    margin-top: 0;
+    color: #0f172a;
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+.feature-item {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 14px;
+    color: #334155;
+    font-weight: 700;
+}
+
+.ai-detail-section {
+    background: #f8fafc;
+}
+
+.section-heading-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dark-tag {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.detail-ai-cards {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.checklist-item {
+    background: #f8fafc;
+    border-left: 5px solid #facc15;
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #334155;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   Listing Detail Responsive
+   ============================================================ */
+
+@media (max-width: 1000px) {
+    .detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-ai-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .detail-info-card h1 {
+        font-size: 28px;
+    }
+
+    .detail-rent {
+        font-size: 28px;
+    }
+
+    .detail-meta-grid,
+    .detail-ai-cards,
+    .feature-grid,
+    .checklist-grid {
+        grid-template-columns: 1fr;
+    }
+}
