@@ -243,3 +243,98 @@ def generate_listing_summary_with_gemini(listing: dict, listing_analysis: dict) 
             "summary_text": "",
             "source": "Rule-based fallback"
         }
+    
+def build_chat_prompt(message: str, current_area_data: dict = None) -> str:
+    """
+    建立右下角 Chatbot 使用的 Gemini prompt。
+
+    message:
+        使用者在 chatbot 輸入的問題。
+
+    current_area_data:
+        使用者目前分析過的地區資料。
+        如果使用者還沒按「開始分析」，這個值可能是 None。
+
+    這個 prompt 的目標：
+    讓 Gemini 像中央大學租屋助理一樣回答，
+    而不是只用簡單關鍵字判斷。
+    """
+
+    if current_area_data:
+        area_context = json.dumps(
+            current_area_data,
+            ensure_ascii=False,
+            indent=2
+        )
+    else:
+        area_context = "目前使用者尚未完成任何地區分析，因此沒有 current_area_data。"
+
+    prompt = f"""
+你是 Happy Rent Agent 的 AI 租屋助理，專門協助中央大學學生找租屋。
+
+你的任務：
+1. 回答使用者關於中央大學附近租屋的問題。
+2. 如果有 current_area_data，請根據資料回答。
+3. 如果沒有 current_area_data，請先引導使用者輸入地點，例如「中央大學後門」、「中壢車站」、「青埔」。
+4. 回答要實用、口語、像學長姐提醒學弟妹。
+5. 不要編造資料。如果資料不足，要直接說需要實際看房確認。
+6. 如果使用者問「哪裡好」、「適合嗎」、「沒有機車可以嗎」，請從：
+   - 到校距離
+   - 租金
+   - 生活機能
+   - 交通工具需求
+   - 看房風險
+   這幾個角度回答。
+7. 回答不要太長，控制在 3 到 6 句，除非使用者要求詳細分析。
+
+使用者問題：
+{message}
+
+目前地區 / 房源分析資料：
+{area_context}
+"""
+    return prompt
+
+
+def generate_chat_reply_with_gemini(message: str, current_area_data: dict = None) -> dict:
+    """
+    使用 Gemini 產生 Chatbot 回覆。
+
+    回傳格式：
+    {
+        "enabled": True,
+        "reply": "...",
+        "source": "Gemini 2.5 Flash"
+    }
+
+    如果 Gemini 失敗，回傳 enabled=False，
+    後端可以 fallback 到原本 rule-based chatbot。
+    """
+
+    try:
+        client = get_gemini_client()
+
+        prompt = build_chat_prompt(
+            message=message,
+            current_area_data=current_area_data
+        )
+
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+
+        return {
+            "enabled": True,
+            "reply": response.text,
+            "source": "Gemini 2.5 Flash"
+        }
+
+    except Exception as e:
+        print("Gemini chat reply error:", e)
+
+        return {
+            "enabled": False,
+            "reply": "",
+            "source": "Rule-based fallback"
+        }

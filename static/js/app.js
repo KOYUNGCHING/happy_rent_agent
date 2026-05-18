@@ -1,5 +1,31 @@
 let currentAreaData = null;
 
+function toggleChatbot(forceOpen) {
+    const chatbot = document.getElementById("chatbot");
+    const toggleButton = document.querySelector(".chatbot-toggle");
+    const chatInput = document.getElementById("chatInput");
+
+    if (!chatbot || !toggleButton) {
+        return;
+    }
+
+    const shouldOpen =
+        typeof forceOpen === "boolean"
+            ? forceOpen
+            : chatbot.classList.contains("is-collapsed");
+
+    chatbot.classList.toggle("is-collapsed", !shouldOpen);
+    toggleButton.setAttribute("aria-expanded", shouldOpen ? "true" : "false");
+    toggleButton.setAttribute(
+        "aria-label",
+        shouldOpen ? "收合 AI 租屋助理" : "開啟 AI 租屋助理"
+    );
+
+    if (shouldOpen && chatInput) {
+        chatInput.focus();
+    }
+}
+
 async function analyzeArea() {
     const input = document.getElementById("locationInput").value.trim();
 
@@ -28,6 +54,7 @@ async function analyzeArea() {
 
         currentAreaData = data;
         renderResult(data);
+        toggleChatbot(true);
         addBotMessage(`我已經完成 ${data.location.location_name} 的租屋地區分析，你可以繼續問我這個地區適不適合你。`);
 
     } catch (error) {
@@ -35,14 +62,6 @@ async function analyzeArea() {
     } finally {
         document.getElementById("loading").classList.add("hidden");
     }
-}
-const summarySource = document.getElementById("summarySource");
-
-if (summarySource) {
-    summarySource.textContent =
-        data.gemini_summary && data.gemini_summary.enabled
-            ? `摘要來源：${data.gemini_summary.source}`
-            : "摘要來源：Rule-based fallback";
 }
 function renderResult(data) {
     document.getElementById("resultSection").classList.remove("hidden");
@@ -85,6 +104,16 @@ function renderResult(data) {
         document.getElementById("aiSummary").textContent =
             data.ai_analysis.summary;
     }
+
+    const summarySource = document.getElementById("summarySource");
+
+    if (summarySource) {
+        summarySource.textContent =
+            data.gemini_summary && data.gemini_summary.enabled
+                ? `摘要來源：${data.gemini_summary.source}`
+                : "摘要來源：Rule-based fallback";
+    }
+
     document.getElementById("coordinateText").textContent =
         `座標：${data.location.latitude}, ${data.location.longitude}`;
     // 顯示天氣資訊

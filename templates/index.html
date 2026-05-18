@@ -222,22 +222,45 @@
     </main>
 
     <!-- 右下角 Chatbot -->
-    <section class="chatbot">
-        <div class="chat-header">
-            <strong>AI 租屋助理</strong>
-            <span>Beta</span>
-        </div>
+    <section class="chatbot is-collapsed" id="chatbot">
+        <button
+            class="chatbot-toggle"
+            type="button"
+            aria-label="開啟 AI 租屋助理"
+            aria-expanded="false"
+            onclick="toggleChatbot()"
+        >
+            <span class="chatbot-toggle-icon">🤖</span>
+            <span class="chatbot-toggle-text">AI</span>
+        </button>
 
-        <div id="chatMessages" class="chat-messages">
-            <div class="bot-message">
-                你好！我是中央大學租屋助理。你可以先輸入地點進行分析，
-                或問我「沒有機車方便嗎？」、「看房要注意什麼？」。
+        <div class="chatbot-panel">
+            <div class="chat-header">
+                <strong>AI 租屋助理</strong>
+                <div class="chat-header-actions">
+                    <span>Beta</span>
+                    <button
+                        class="chat-close-button"
+                        type="button"
+                        aria-label="收合 AI 租屋助理"
+                        onclick="toggleChatbot(false)"
+                    >
+                        ×
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <div class="chat-input">
-            <input id="chatInput" type="text" placeholder="輸入問題...">
-            <button onclick="sendChat()">送出</button>
+            <div id="chatMessages" class="chat-messages">
+                <div class="bot-message">
+                    你好！我是中央大學租屋助理。你可以先輸入地點進行分析，
+                    或問我「沒有機車方便嗎？」、「看房要注意什麼？」。
+                </div>
+            </div>
+
+            <div class="chat-input">
+                <input id="chatInput" type="text" placeholder="輸入問題...">
+                <button onclick="sendChat()">送出</button>
+            </div>
         </div>
     </section>
 

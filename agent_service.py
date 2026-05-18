@@ -9,8 +9,10 @@ from tools.commute_tool import analyze_commute_to_ncu
 from tools.checklist_tool import generate_smart_checklist
 from tools.gemini_summary_tool import (
     generate_area_summary_with_gemini,
-    generate_listing_summary_with_gemini
+    generate_listing_summary_with_gemini,
+    generate_chat_reply_with_gemini
 )
+from tools.gemini_summary_tool import generate_chat_reply_with_gemini
 
 def summarize_area(location, weather, air_quality, commute, transport, facilities, rental):
     """
@@ -201,6 +203,29 @@ def chat_with_agent(message, current_area_data=None):
         "你可以問我：這個地區適合中央大學學生嗎？沒有機車方便嗎？"
         "走路到學校要多久？或看房要注意什麼？"
     )
+
+def chat_with_agent_gemini(message, current_area_data=None):
+    """
+    Gemini 版本 Chatbot。
+
+    流程：
+    1. 優先呼叫 Gemini，讓它根據使用者問題與 current_area_data 回答。
+    2. 如果 Gemini API key 沒設定、API 失敗、或 Gemini 回覆失敗，
+       就 fallback 到原本的 rule-based chat_with_agent()。
+    """
+
+    # 先嘗試使用 Gemini 回覆
+    gemini_result = generate_chat_reply_with_gemini(
+        message=message,
+        current_area_data=current_area_data
+    )
+
+    # 如果 Gemini 成功，就直接回 Gemini 的回答
+    if gemini_result.get("enabled"):
+        return gemini_result["reply"]
+
+    # 如果 Gemini 失敗，回到原本規則式 chatbot
+    return chat_with_agent(message, current_area_data)
 
 def parse_rent_range(rent_range_text):
     """

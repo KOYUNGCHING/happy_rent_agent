@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from agent_service import run_agent, chat_with_agent, analyze_listing
+from agent_service import run_agent, chat_with_agent, chat_with_agent_gemini, analyze_listing
 from database import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -625,7 +625,9 @@ def chat():
     if not message.strip():
         return jsonify({"error": "Please enter a message."}), 400
 
-    reply = chat_with_agent(message, current_area_data)
+    # 使用 Gemini Chat Agent 回覆
+    # 如果 Gemini 失敗，chat_with_agent_gemini() 內部會 fallback 到規則式回覆
+    reply = chat_with_agent_gemini(message, current_area_data)
     return jsonify({"reply": reply})
 
 
