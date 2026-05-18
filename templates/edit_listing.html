@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 讓網頁在手機上正常顯示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>編輯房源 | Happy Rent Agent</title>
+
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <!-- 導覽列 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            Happy Rent Agent
+        </div>
+
+        <div class="nav-links">
+            <a href="/">首頁</a>
+            <a href="/listings">找房源</a>
+            <a href="/landlord/dashboard">房東後台</a>
+            <a href="/logout">登出</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <!-- 頁面標題 -->
+        <section class="form-hero">
+            <p class="tag dark-tag">Edit Listing</p>
+            <h1>編輯房源</h1>
+            <p>
+                你可以在這裡更新房源資訊。更新後，找房者會在房源列表與詳細頁看到最新資料。
+            </p>
+        </section>
+
+        {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- 編輯房源表單 -->
+        <!-- action 指向目前這筆房源的 edit route -->
+        <form class="listing-form" method="POST" action="/landlord/listings/{{ listing.id }}/edit">
+
+            <!-- 房源基本資訊 -->
+            <section class="form-section">
+                <h2>房源基本資訊</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="title">房源名稱 *</label>
+                        <input
+                            id="title"
+                            name="title"
+                            type="text"
+                            value="{{ listing.title }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="area">地區 *</label>
+                        <input
+                            id="area"
+                            name="area"
+                            type="text"
+                            value="{{ listing.area }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group wide-field">
+                        <label for="address">地址 / 位置描述 *</label>
+                        <input
+                            id="address"
+                            name="address"
+                            type="text"
+                            value="{{ listing.address }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="room_type">房型 *</label>
+                        <select id="room_type" name="room_type" required>
+                            <option value="">請選擇房型</option>
+                            <option value="雅房" {% if listing.room_type == "雅房" %}selected{% endif %}>雅房</option>
+                            <option value="分租套房" {% if listing.room_type == "分租套房" %}selected{% endif %}>分租套房</option>
+                            <option value="獨立套房" {% if listing.room_type == "獨立套房" %}selected{% endif %}>獨立套房</option>
+                            <option value="整層合租" {% if listing.room_type == "整層合租" %}selected{% endif %}>整層合租</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rent">月租金 *</label>
+                        <input
+                            id="rent"
+                            name="rent"
+                            type="number"
+                            value="{{ listing.rent }}"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deposit">押金</label>
+                        <input
+                            id="deposit"
+                            name="deposit"
+                            type="number"
+                            value="{{ listing.deposit }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="size">坪數</label>
+                        <input
+                            id="size"
+                            name="size"
+                            type="text"
+                            value="{{ listing.size }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="floor">樓層</label>
+                        <input
+                            id="floor"
+                            name="floor"
+                            type="text"
+                            value="{{ listing.floor }}"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 房源設備 -->
+            <section class="form-section">
+                <h2>房源設備與條件</h2>
+
+                <div class="checkbox-grid">
+                    <label class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            name="has_window"
+                            {% if listing.has_window %}checked{% endif %}
+                        >
+                        有對外窗
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            name="can_cook"
+                            {% if listing.can_cook %}checked{% endif %}
+                        >
+                        可開伙
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            name="pet_allowed"
+                            {% if listing.pet_allowed %}checked{% endif %}
+                        >
+                        可養寵物
+                    </label>
+
+                    <label class="checkbox-item">
+                        <input
+                            type="checkbox"
+                            name="internet_included"
+                            {% if listing.internet_included %}checked{% endif %}
+                        >
+                        包網路
+                    </label>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="water_fee">水費</label>
+                        <input
+                            id="water_fee"
+                            name="water_fee"
+                            type="text"
+                            value="{{ listing.water_fee }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="electricity_fee">電費</label>
+                        <input
+                            id="electricity_fee"
+                            name="electricity_fee"
+                            type="text"
+                            value="{{ listing.electricity_fee }}"
+                        >
+                    </div>
+
+                    <div class="form-group wide-field">
+                        <label for="image_url">房源圖片 URL</label>
+                        <input
+                            id="image_url"
+                            name="image_url"
+                            type="text"
+                            value="{{ listing.image_url }}"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 房源描述 -->
+            <section class="form-section">
+                <h2>房源描述</h2>
+
+                <div class="form-group">
+                    <label for="description">描述</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="5"
+                    >{{ listing.description }}</textarea>
+                </div>
+            </section>
+
+            <!-- 聯絡資訊 -->
+            <section class="form-section">
+                <h2>聯絡資訊</h2>
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="contact_name">聯絡人</label>
+                        <input
+                            id="contact_name"
+                            name="contact_name"
+                            type="text"
+                            value="{{ listing.contact_name }}"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contact_phone">聯絡電話</label>
+                        <input
+                            id="contact_phone"
+                            name="contact_phone"
+                            type="text"
+                            value="{{ listing.contact_phone }}"
+                        >
+                    </div>
+                </div>
+            </section>
+
+            <!-- 送出按鈕 -->
+            <div class="form-actions">
+                <a href="/landlord/dashboard" class="cancel-link">取消</a>
+                <button type="submit" class="submit-button">
+                    儲存修改
+                </button>
+            </div>
+
+        </form>
+
+    </main>
+
+</body>
+</html>

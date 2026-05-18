@@ -960,3 +960,68 @@ h1 {
         grid-column: span 1;
     }
 }
+
+/* ============================================================
+   Landlord Dashboard Actions 房東後台按鈕
+   ============================================================ */
+
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* 編輯按鈕 */
+.edit-link {
+    display: inline-block;
+    text-decoration: none;
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+}
+
+.edit-link:hover {
+    background: #bae6fd;
+}
+
+/* 下架按鈕 */
+.danger-button {
+    border: none;
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.danger-button:hover {
+    background: #fecaca;
+}
+
+/* 讓 form 不要有多餘 margin */
+.dashboard-actions form {
+    margin: 0;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.available-badge {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.inactive-badge {
+    background: #e5e7eb;
+    color: #374151;
+}

@@ -66,15 +66,34 @@
                     <p class="listing-rent">
                         NT$ {{ "{:,}".format(listing.rent) }} / 月
                     </p>
-
                     <p class="listing-description">
-                        狀態：{{ listing.status }}
+                        狀態：
+                        {% if listing.status == "available" %}
+                            <span class="status-badge available-badge">上架中</span>
+                        {% else %}
+                            <span class="status-badge inactive-badge">已下架</span>
+                        {% endif %}
                     </p>
 
-                    <div class="listing-actions">
+                    <div class="listing-actions dashboard-actions">
                         <a class="primary-link" href="/listings/{{ listing.id }}">
                             查看詳情
                         </a>
+
+                        <a class="edit-link" href="/landlord/listings/{{ listing.id }}/edit">
+                            編輯
+                        </a>
+                        {% if listing.status == "available" %}
+                        <form
+                            method="POST"
+                            action="/landlord/listings/{{ listing.id }}/deactivate"
+                            onsubmit="return confirm('確定要下架這筆房源嗎？下架後找房者將不會在列表看到它。');"
+                        >
+                            <button type="submit" class="danger-button">
+                                下架
+                            </button>
+                        </form>
+                        {% endif %}
                     </div>
                 </div>
             </article>

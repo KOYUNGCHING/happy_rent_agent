@@ -406,6 +406,179 @@ def logout():
     session.clear()
     return redirect(url_for("home"))
 
+@app.route("/landlord/listings/<int:listing_id>/edit", methods=["GET", "POST"])
+def edit_listing(listing_id):
+    """
+    房東編輯房源頁。
+
+    這個 route 有兩種情況：
+
+    1. GET：
+       顯示目前房源資料，讓房東修改。
+
+    2. POST：
+       接收表單資料，更新資料庫中的房源。
+
+    權限限制：
+    - 必須登入
+    - 必須是 landlord
+    - 只能編輯自己上架的房源
+    """
+
+    # 檢查是否登入
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    # 檢查身份是否為房東
+    if session.get("user_role") != "landlord":
+        return "你不是房東身份，無法編輯房源。", 403
+
+    conn = get_db_connection()
+
+    # 查詢這筆房源，並確認 landlord_id 是目前登入的房東
+    listing = conn.execute("""
+        SELECT *
+        FROM listings
+        WHERE id = ? AND landlord_id = ?
+    """, (listing_id, session["user_id"])).fetchone()
+
+    # 如果找不到，代表房源不存在，或不是這個房東的房源
+    if listing is None:
+        conn.close()
+        return "找不到房源，或你沒有權限編輯這筆房源。", 404
+
+    # GET：顯示編輯頁
+    if request.method == "GET":
+        conn.close()
+        return render_template("edit_listing.html", listing=dict(listing))
+
+    # --------------------------------------------------------
+    # POST：更新房源資料
+    # --------------------------------------------------------
+
+    title = request.form.get("title", "").strip()
+    area = request.form.get("area", "").strip()
+    address = request.form.get("address", "").strip()
+    room_type = request.form.get("room_type", "").strip()
+
+    rent = int(request.form.get("rent", 0))
+    deposit = int(request.form.get("deposit", 0) or 0)
+
+    size = request.form.get("size", "").strip()
+    floor = request.form.get("floor", "").strip()
+
+    has_window = 1 if request.form.get("has_window") == "on" else 0
+    can_cook = 1 if request.form.get("can_cook") == "on" else 0
+    pet_allowed = 1 if request.form.get("pet_allowed") == "on" else 0
+    internet_included = 1 if request.form.get("internet_included") == "on" else 0
+
+    water_fee = request.form.get("water_fee", "").strip()
+    electricity_fee = request.form.get("electricity_fee", "").strip()
+    description = request.form.get("description", "").strip()
+
+    contact_name = request.form.get("contact_name", "").strip()
+    contact_phone = request.form.get("contact_phone", "").strip()
+    image_url = request.form.get("image_url", "").strip()
+
+    if not image_url:
+        image_url = listing["image_url"]
+
+    # 基本驗證
+    if not title or not area or not address or not room_type or rent <= 0:
+        conn.close()
+        return render_template(
+            "edit_listing.html",
+            listing=dict(listing),
+            error="請填寫房源名稱、地區、地址、房型與租金。"
+        )
+
+    # 更新資料庫
+    conn.execute("""
+        UPDATE listings
+        SET
+            title = ?,
+            area = ?,
+            address = ?,
+            room_type = ?,
+            rent = ?,
+            deposit = ?,
+            size = ?,
+            floor = ?,
+            has_window = ?,
+            can_cook = ?,
+            pet_allowed = ?,
+            water_fee = ?,
+            electricity_fee = ?,
+            internet_included = ?,
+            description = ?,
+            contact_name = ?,
+            contact_phone = ?,
+            image_url = ?
+        WHERE id = ? AND landlord_id = ?
+    """, (
+        title,
+        area,
+        address,
+        room_type,
+        rent,
+        deposit,
+        size,
+        floor,
+        has_window,
+        can_cook,
+        pet_allowed,
+        water_fee,
+        electricity_fee,
+        internet_included,
+        description,
+        contact_name,
+        contact_phone,
+        image_url,
+        listing_id,
+        session["user_id"]
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("landlord_dashboard"))
+@app.route("/landlord/listings/<int:listing_id>/deactivate", methods=["POST"])
+def deactivate_listing(listing_id):
+    """
+    房東下架房源。
+
+    這裡不是刪除資料，而是把 status 改成 'inactive'。
+
+    為什麼不直接 DELETE？
+    因為正式平台通常會保留歷史資料，
+    例如之後可以查詢：
+    - 房東曾經上架過哪些房源
+    - 哪些房源已出租
+    - 房源歷史紀錄
+    """
+
+    # 檢查是否登入
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    # 檢查身份
+    if session.get("user_role") != "landlord":
+        return "你不是房東身份，無法下架房源。", 403
+
+    conn = get_db_connection()
+
+    # 只允許房東下架自己的房源
+    conn.execute("""
+        UPDATE listings
+        SET status = 'inactive'
+        WHERE id = ? AND landlord_id = ?
+    """, (listing_id, session["user_id"]))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("landlord_dashboard"))
+
 @app.route("/landlord/dashboard")
 def landlord_dashboard():
     """
