@@ -259,18 +259,37 @@
 
         <!-- 看房 Checklist -->
         <section class="detail-section">
-            <h2>看房提醒 Checklist</h2>
+            <h2>AI 看房提醒 Checklist</h2>
+            <p class="section-description">
+                以下問題根據中央大學學生真實看房經驗整理，並依照目前房源條件自動挑選。
+            </p>
 
-            <div class="checklist-grid">
-                <div class="checklist-item">確認實際到中央大學的通勤時間</div>
-                <div class="checklist-item">確認晚上周邊是否安靜與安全</div>
-                <div class="checklist-item">詢問水電費計算方式</div>
-                <div class="checklist-item">確認網路是否包含在租金內</div>
-                <div class="checklist-item">檢查房間採光與通風</div>
-                <div class="checklist-item">確認垃圾處理方式與倒垃圾時間</div>
-                <div class="checklist-item">確認是否可開伙、是否有油煙問題</div>
-                <div class="checklist-item">確認合約期限、押金與退租規則</div>
-            </div>
+            {% if listing_analysis and listing_analysis.smart_checklist %}
+                <div class="smart-checklist-list">
+                    {% for item in listing_analysis.smart_checklist %}
+                    <div class="smart-checklist-item">
+                        <div class="checklist-category">
+                            {{ item.category }}
+                        </div>
+
+                        <h3>{{ item.question }}</h3>
+
+                        <p>{{ item.reason }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="checklist-grid">
+                    <div class="checklist-item">確認實際到中央大學的通勤時間</div>
+                    <div class="checklist-item">確認晚上周邊是否安靜與安全</div>
+                    <div class="checklist-item">詢問水電費計算方式</div>
+                    <div class="checklist-item">確認網路是否包含在租金內</div>
+                    <div class="checklist-item">檢查房間採光與通風</div>
+                    <div class="checklist-item">確認垃圾處理方式與倒垃圾時間</div>
+                    <div class="checklist-item">確認是否可開伙、是否有油煙問題</div>
+                    <div class="checklist-item">確認合約期限、押金與退租規則</div>
+                </div>
+            {% endif %}
         </section>
 
     </main>

@@ -6,7 +6,7 @@ from tools.facility_tool import get_facilities
 from tools.rental_tool import get_rental_data
 from tools.ncu_area_tool import normalize_ncu_area
 from tools.commute_tool import analyze_commute_to_ncu
-
+from tools.checklist_tool import generate_smart_checklist
 
 def summarize_area(location, weather, air_quality, commute, transport, facilities, rental):
     """
@@ -530,10 +530,14 @@ def analyze_listing(listing):
     )
 
     # 產生看房時要問房東的問題
+    # 原本的規則式問題
     questions = generate_questions_to_ask_landlord(
         listing=listing,
         rent_evaluation=rent_evaluation
     )
+
+    # 根據你的真實看房筆記產生 checklist
+    smart_checklist = generate_smart_checklist(listing)
 
     # 判斷適合哪種學生
     suitable_student_type = decide_suitable_student_type(
@@ -558,5 +562,6 @@ def analyze_listing(listing):
         "risks": risks,
         "questions": questions,
         "suitable_student_type": suitable_student_type,
-        "final_summary": final_summary
+        "final_summary": final_summary,
+        "smart_checklist": smart_checklist
     }

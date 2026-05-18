@@ -6,3 +6,4 @@ __pycache__/
 .idea/
 .vscode/
 happy_rent.db
+data/private_listings_notes.csv
