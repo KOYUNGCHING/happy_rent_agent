@@ -2,109 +2,225 @@
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
+
+    <!-- 讓網頁在手機上也能正常縮放 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Housing Area Insight Agent</title>
+
+    <title>Happy Rent Agent | 中央大學租屋平台</title>
+
+    <!-- 共用 CSS -->
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <header class="hero">
-        <div class="hero-content">
+
+    <!-- 導覽列 -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            Happy Rent Agent
+        </div>
+
+        <div class="nav-links">
+            <a href="/">首頁</a>
+            <a href="/listings">找房源</a>
+            <a href="/landlord/new">房東上架</a>
+            <a href="/login">登入</a>
+            <a href="/register">註冊</a>
+        </div>
+    </nav>
+
+    <!-- 首頁 Hero 區塊 -->
+    <header class="home-hero">
+        <div class="home-hero-content">
+
             <p class="tag">AI Housing Assistant for NCU Students</p>
+
             <h1>Happy Rent Agent</h1>
+
             <p class="subtitle">
-                輸入中央大學周邊想租屋的地點，AI Agent 會整合到校便利性、租金負擔、學生生活機能、天氣與空氣品質，幫助你快速判斷這個區域是否適合居住。
+                專為中央大學學生設計的租屋平台與 AI 租屋助理。
+                找房者可以搜尋房源、查看 AI 房源分析；房東可以上架空房間；
+                AI Agent 會協助分析到校距離、租金合理性、生活機能與看房風險。
             </p>
 
-            <div class="search-box">
-                <input id="locationInput" type="text" placeholder="例如：我想找中央大學後門附近租屋">
-                <button onclick="analyzeArea()">開始分析</button>
-            </div>
-            <div class="hero-actions">
-                <a href="/listings" class="secondary-link">
-                    查看中央大學附近房源
+            <!-- 三個主要入口 -->
+            <div class="home-action-grid">
+
+                <!-- 找房者入口 -->
+                <a href="/listings" class="home-action-card">
+                    <span class="action-icon">🏠</span>
+                    <h2>我是找房者</h2>
+                    <p>
+                        查看中央大學周邊房源，篩選租金、房型與地區，
+                        並使用 AI 分析房源是否適合你。
+                    </p>
                 </a>
+
+                <!-- 房東入口 -->
+                <a href="/landlord/new" class="home-action-card">
+                    <span class="action-icon">🧑‍💼</span>
+                    <h2>我是房東</h2>
+                    <p>
+                        上架你的空房間，讓中央大學學生可以快速找到合適房源。
+                    </p>
+                </a>
+
+                <!-- AI 分析入口 -->
+                <a href="#ai-area-analysis" class="home-action-card">
+                    <span class="action-icon">🤖</span>
+                    <h2>AI 區域分析</h2>
+                    <p>
+                        還不確定要住哪裡？輸入地點，讓 AI 分析到校便利性、
+                        租金負擔、天氣與空氣品質。
+                    </p>
+                </a>
+
             </div>
         </div>
     </header>
 
+    <!-- 專案痛點介紹 -->
     <main class="container">
-        <section id="loading" class="loading hidden">
-            AI Agent 正在分析中...
-        </section>
 
-        <section id="resultSection" class="hidden">
-            <h2 id="resultTitle">地區分析結果</h2>
-
-            <div class="cards">
-                <div class="card">
-                    <p class="card-label">到校便利性</p>
-                    <h3 id="commuteScore">--</h3>
-                    <p id="commuteSummary">--</p>
-                </div>
-
-                <div class="card">
-                    <p class="card-label">生活機能</p>
-                    <h3 id="facilityScore">--</h3>
-                    <p id="facilitySummary">--</p>
-                </div>
-
-                <div class="card">
-                    <p class="card-label">租金負擔</p>
-                    <h3 id="rentalLevel">--</h3>
-                    <p id="rentalSummary">--</p>
-                </div>
-
-                <div class="card">
-                    <p class="card-label">空氣品質</p>
-                    <h3 id="airQuality">--</h3>
-                    <p id="airSummary">--</p>
-                </div>
+        <section class="problem-section">
+            <div class="section-heading">
+                <p class="tag dark-tag">Why This Project</p>
+                <h2>為什麼中央大學學生需要這個平台？</h2>
             </div>
 
-            <section class="analysis-panel">
-                <h2>AI 地區摘要</h2>
-                <p id="aiSummary"></p>
-                <p class="coordinate-text" id="coordinateText"></p>
+            <div class="problem-grid">
+
+                <div class="problem-card">
+                    <h3>租屋資訊分散</h3>
+                    <p>
+                        學生找房時常常需要同時看 Facebook 社團、租屋平台、Google Maps
+                        和學長姐分享，資訊不集中且難以比較。
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <h3>FB 社團關閉後更難找房</h3>
+                    <p>
+                        如果原本常用的租屋資訊社群關閉，學生就更難快速掌握目前有哪些空房、
+                        價格是否合理、地點是否方便。
+                    </p>
+                </div>
+
+                <div class="problem-card">
+                    <h3>租屋決策不只看租金</h3>
+                    <p>
+                        對學生來說，是否離學校近、沒有機車能不能住、晚上是否安全、
+                        水電費怎麼算，都會影響實際居住品質。
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- AI 區域分析區塊 -->
+        <section id="ai-area-analysis" class="ai-analysis-home-section">
+
+            <div class="section-heading">
+                <p class="tag dark-tag">AI Area Analysis</p>
+                <h2>AI 租屋區域分析</h2>
+                <p>
+                    輸入中央大學周邊想租屋的地點，AI Agent 會整合到校便利性、
+                    租金負擔、天氣與空氣品質，幫助你快速判斷這個區域是否適合居住。
+                </p>
+            </div>
+
+            <!-- AI 搜尋框 -->
+            <div class="search-box light-search-box">
+                <input id="locationInput" type="text" placeholder="例如：我想找中央大學後門附近租屋">
+                <button onclick="analyzeArea()">開始分析</button>
+            </div>
+
+            <!-- loading 區塊 -->
+            <section id="loading" class="loading hidden">
+                AI Agent 正在分析中...
             </section>
-            <section class="details-grid">
-                <div class="detail-card">
-                    <h3>到校方式估算</h3>
-                    <p id="commuteInfo"></p>
-                </div>
-                <div class="detail-card">
-                    <h3>天氣資訊</h3>
-                    <p id="weatherInfo"></p>
+
+            <!-- AI 分析結果 -->
+            <section id="resultSection" class="hidden">
+                <h2 id="resultTitle">地區分析結果</h2>
+
+                <div class="cards">
+                    <div class="card">
+                        <p class="card-label">到校便利性</p>
+                        <h3 id="commuteScore">--</h3>
+                        <p id="commuteSummary">--</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">學生生活機能</p>
+                        <h3 id="facilityScore">--</h3>
+                        <p id="facilitySummary">--</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">租金負擔</p>
+                        <h3 id="rentalLevel">--</h3>
+                        <p id="rentalSummary">--</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">空氣品質</p>
+                        <h3 id="airQuality">--</h3>
+                        <p id="airSummary">--</p>
+                    </div>
                 </div>
 
-                <div class="detail-card">
-                    <h3>租金資訊</h3>
-                    <p id="rentalInfo"></p>
-                    <p class="source-text" id="rentalNote"></p>
-                </div>
+                <section class="analysis-panel">
+                    <h2>AI 地區摘要</h2>
+                    <p id="aiSummary"></p>
+                    <p class="coordinate-text" id="coordinateText"></p>
+                </section>
 
-                <div class="detail-card">
-                    <h3>優點</h3>
-                    <ul id="prosList"></ul>
-                </div>
+                <section class="details-grid">
 
-                <div class="detail-card">
-                    <h3>可能缺點</h3>
-                    <ul id="consList"></ul>
-                </div>
+                    <div class="detail-card">
+                        <h3>到校方式估算</h3>
+                        <p id="commuteInfo"></p>
+                    </div>
 
-                <div class="detail-card wide">
-                    <h3>適合族群</h3>
-                    <ul id="suitableList"></ul>
-                </div>
+                    <div class="detail-card">
+                        <h3>天氣資訊</h3>
+                        <p id="weatherInfo"></p>
+                        <p class="source-text" id="weatherSource"></p>
+                    </div>
 
-                <div class="detail-card wide">
-                    <h3>整體建議</h3>
-                    <p id="suggestion"></p>
-                </div>
+                    <div class="detail-card">
+                        <h3>租金資訊</h3>
+                        <p id="rentalInfo"></p>
+                        <p class="source-text" id="rentalNote"></p>
+                    </div>
+
+                    <div class="detail-card">
+                        <h3>優點</h3>
+                        <ul id="prosList"></ul>
+                    </div>
+
+                    <div class="detail-card">
+                        <h3>可能缺點</h3>
+                        <ul id="consList"></ul>
+                    </div>
+
+                    <div class="detail-card">
+                        <h3>適合族群</h3>
+                        <ul id="suitableList"></ul>
+                    </div>
+
+                    <div class="detail-card wide">
+                        <h3>整體建議</h3>
+                        <p id="suggestion"></p>
+                    </div>
+
+                </section>
             </section>
+
         </section>
     </main>
 
+    <!-- 右下角 Chatbot -->
     <section class="chatbot">
         <div class="chat-header">
             <strong>AI 租屋助理</strong>
@@ -113,7 +229,8 @@
 
         <div id="chatMessages" class="chat-messages">
             <div class="bot-message">
-                你好！我是中央大學租屋萬事通。你可以問我「中央大學後門附近適合租屋嗎？」或「看房要注意什麼？」。
+                你好！我是中央大學租屋助理。你可以先輸入地點進行分析，
+                或問我「沒有機車方便嗎？」、「看房要注意什麼？」。
             </div>
         </div>
 
@@ -123,6 +240,7 @@
         </div>
     </section>
 
+    <!-- 原本 AI 分析與 chatbot 使用的 JS -->
     <script src="/static/js/app.js"></script>
 </body>
 </html>

@@ -1025,3 +1025,144 @@ h1 {
     background: #e5e7eb;
     color: #374151;
 }
+/* ============================================================
+   Home Page 新首頁
+   ============================================================ */
+
+.home-hero {
+    padding: 72px 24px 56px;
+    background: linear-gradient(135deg, #172554, #2563eb);
+    color: white;
+}
+
+.home-hero-content {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.home-hero h1 {
+    font-size: 56px;
+    margin: 0 0 16px;
+}
+
+.home-action-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+    margin-top: 36px;
+}
+
+.home-action-card {
+    display: block;
+    text-decoration: none;
+    color: #0f172a;
+    background: white;
+    border-radius: 26px;
+    padding: 26px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.16);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.home-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+}
+
+.action-icon {
+    font-size: 34px;
+    display: inline-block;
+    margin-bottom: 14px;
+}
+
+.home-action-card h2 {
+    margin: 0 0 10px;
+    font-size: 24px;
+    color: #172554;
+}
+
+.home-action-card p {
+    color: #475569;
+    line-height: 1.7;
+}
+
+.problem-section,
+.ai-analysis-home-section {
+    margin: 42px 0;
+}
+
+.section-heading {
+    margin-bottom: 22px;
+}
+
+.section-heading h2 {
+    color: #0f172a;
+    font-size: 34px;
+    margin: 10px 0;
+}
+
+.section-heading p {
+    color: #475569;
+    line-height: 1.8;
+    max-width: 780px;
+}
+
+.problem-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+}
+
+.problem-card {
+    background: white;
+    border-radius: 24px;
+    padding: 26px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.problem-card h3 {
+    color: #172554;
+    margin-top: 0;
+}
+
+.problem-card p {
+    color: #475569;
+    line-height: 1.8;
+}
+
+.ai-analysis-home-section {
+    background: white;
+    border-radius: 28px;
+    padding: 32px;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.light-search-box {
+    margin-top: 20px;
+    max-width: 820px;
+}
+
+.light-search-box input {
+    border: 1px solid #e5e7eb;
+    background: #f8fafc;
+}
+
+.light-search-box button {
+    background: #172554;
+    color: white;
+}
+
+/* 手機版 */
+@media (max-width: 900px) {
+    .home-action-grid,
+    .problem-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .home-hero h1 {
+        font-size: 42px;
+    }
+
+    .ai-analysis-home-section {
+        padding: 22px;
+    }
+}
