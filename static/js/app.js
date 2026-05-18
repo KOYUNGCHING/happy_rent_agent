@@ -56,10 +56,13 @@ function renderResult(data) {
     document.getElementById("facilitySummary").textContent =
         data.facilities.summary;
 
+    // 顯示租金負擔等級
     document.getElementById("rentalLevel").textContent =
         data.rental.rental_level;
+
+    // 顯示租金摘要與學生建議
     document.getElementById("rentalSummary").textContent =
-        data.rental.summary;
+        `${data.rental.summary} ${data.rental.student_advice}`;
 
     document.getElementById("airQuality").textContent =
         `${data.air_quality.level} / AQI ${data.air_quality.aqi}`;
@@ -77,9 +80,17 @@ function renderResult(data) {
         `${data.weather.weather}，溫度 ${data.weather.temperature}，` +
         `濕度 ${data.weather.humidity}，降雨量 ${data.weather.precipitation}，` +
         `風速 ${data.weather.wind_speed}。${data.weather.summary}`;
+    // 顯示中央大學學生租屋情境的租金資訊
+    // 這裡不是即時租屋平台價格，而是 MVP 估算資料
     document.getElementById("rentalInfo").textContent =
-        `套房估計：${data.rental.studio_range}；雅房估計：${data.rental.shared_room_range}。${data.rental.summary}`;
-
+        `雅房估計：${data.rental.room_range}；` +
+        `分租套房估計：${data.rental.studio_range}；` +
+        `獨立套房估計：${data.rental.independent_studio_range}；` +
+        `整層合租估計：${data.rental.shared_apartment_range}。` +
+        `${data.rental.summary} ${data.rental.student_advice}`;
+    // 顯示租金資料備註，避免使用者誤以為這是即時租屋平台價格
+    document.getElementById("rentalNote").textContent =
+        data.rental.note;
     renderList("prosList", data.ai_analysis.pros);
     renderList("consList", data.ai_analysis.cons);
     renderList("suitableList", data.ai_analysis.suitable_for);

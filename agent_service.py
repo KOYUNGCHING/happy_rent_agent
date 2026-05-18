@@ -21,22 +21,23 @@ def summarize_area(location, weather, air_quality, commute, transport, facilitie
         f"租金方面，{rental['summary']}"
     )
 
+    # 針對中央大學學生租屋情境整理優點
     pros = [
-        "交通非常便利，適合需要通勤或常移動的人",
-        "生活機能完整，外食、採買與醫療資源都方便",
-        "附近公共設施多，日常生活便利性高"
+        f"到中央大學距離約 {commute['distance_km']} 公里，可作為學生租屋距離判斷依據",
+        "可根據步行、腳踏車與機車時間評估是否適合日常通勤",
+        "系統會同時整合租金、生活機能、天氣與空氣品質，減少學生手動查詢時間"
     ]
-
+    # 針對中央大學學生租屋情境整理可能缺點
     cons = [
-        "租金相對偏高，可能不適合預算有限的租屋族",
-        "人流量較大，部分區域可能較吵",
-        "熱門地區競爭高，看房決策時間可能較短"
+        "目前租金資料為 MVP 估算，尚未接入即時租屋平台或校園租屋資料庫",
+        "通勤時間目前使用直線距離估算，實際時間可能受道路、紅綠燈與交通方式影響",
+        "生活機能目前仍是基礎版本，後續需要加入學生常用設施，例如洗衣店、宵夜、影印店與機車行"
     ]
-
+    # 針對中央大學學生整理適合族群
     suitable_for = [
-        "重視交通便利的學生或上班族",
-        "需要經常搭乘捷運、火車或高鐵的人",
-        "預算較充足且希望生活機能完整的租屋族"
+        "正在尋找中央大學校外租屋的學生",
+        "想快速比較不同生活圈到校便利性的學生",
+        "希望在看房前先了解租金、通勤與生活機能的租屋族"
     ]
 
     suggestion = (
@@ -109,7 +110,15 @@ def run_agent(user_input):
     air_quality = get_air_quality(location["latitude"], location["longitude"])
     transport = get_transport_info(location["latitude"], location["longitude"])
     facilities = get_facilities(location["latitude"], location["longitude"])
-    rental = get_rental_data(location["city"], location["district"])
+    # 根據中央大學學生租屋情境取得租金估算
+    # 這裡會把地點名稱與到中央大學距離傳進去
+    # Rental Tool 會依照不同生活圈給出不同租金範圍
+    rental = get_rental_data(
+        city=location["city"],
+        district=location["district"],
+        location_name=location["location_name"],
+        distance_km=commute["distance_km"]
+    )
 
     ai_analysis = summarize_area(
         location=location,
@@ -158,11 +167,18 @@ def chat_with_agent(message, current_area_data=None):
                 f"{commute.get('summary', '')}"
             )
 
-        if "為什麼" in message and "租金" in message:
+        if "租金" in message or "房租" in message or "多少錢" in message:
+            rental = current_area_data.get("rental", {})
+
             return (
-                f"{location_name}租金偏高的主要原因通常是交通便利、商業活動密集、生活機能完整，"
-                "再加上學生租屋需求集中，所以租屋價格容易高於其他區域。"
+                f"{location_name}的租金負擔等級目前估計為「{rental.get('rental_level', '未知')}」。"
+                f"雅房約 {rental.get('room_range', '資料不足')}，"
+                f"分租套房約 {rental.get('studio_range', '資料不足')}，"
+                f"獨立套房約 {rental.get('independent_studio_range', '資料不足')}。"
+                f"{rental.get('student_advice', '')}"
+                "提醒：目前這是 MVP 估算資料，之後可以接入實際租屋資料集提高準確度。"
             )
+
 
         if "適合" in message:
             return (
