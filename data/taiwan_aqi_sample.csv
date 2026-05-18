@@ -1,0 +1,6 @@
+sitename,county,aqi,status,pm2.5,pm10,pollutant,latitude,longitude,publishtime
+中壢,桃園市,55,普通,16,32,,24.953278,121.221667,Sample Data
+平鎮,桃園市,60,普通,18,35,,24.952786,121.204981,Sample Data
+桃園,桃園市,50,良好,14,30,,24.994789,121.319964,Sample Data
+大園,桃園市,58,普通,17,34,,25.060344,121.201811,Sample Data
+龍潭,桃園市,48,良好,13,28,,24.863869,121.216350,Sample Data
