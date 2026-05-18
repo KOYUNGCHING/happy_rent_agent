@@ -147,72 +147,110 @@
         <section class="detail-section ai-detail-section">
             <div class="section-heading-row">
                 <div>
-                    <p class="tag dark-tag">AI Agent Analysis</p>
+                    <p class="tag dark-tag">AI Listing Analysis</p>
                     <h2>AI 房源分析</h2>
                 </div>
             </div>
 
-            {% if ai_result %}
+            {% if listing_analysis %}
+
+                <!-- AI 分析總結 -->
+                <div class="analysis-panel">
+                    <h2>AI 整體判斷</h2>
+                    <p>{{ listing_analysis.final_summary }}</p>
+                </div>
 
                 <!-- AI 分析卡片 -->
                 <div class="cards detail-ai-cards">
 
                     <div class="card">
                         <p class="card-label">到校便利性</p>
-                        <h3>{{ ai_result.commute.commute_score }} / 100</h3>
-                        <p>{{ ai_result.commute.summary }}</p>
+                        <h3>{{ listing_analysis.area_analysis.commute.commute_score }} / 100</h3>
+                        <p>{{ listing_analysis.area_analysis.commute.summary }}</p>
                     </div>
 
                     <div class="card">
-                        <p class="card-label">租金參考</p>
-                        <h3>{{ ai_result.rental.rental_level }}</h3>
-                        <p>{{ ai_result.rental.summary }}</p>
+                        <p class="card-label">租金合理性</p>
+                        <h3>{{ listing_analysis.rent_evaluation.level }}</h3>
+                        <p>{{ listing_analysis.rent_evaluation.message }}</p>
+                    </div>
+
+                    <div class="card">
+                        <p class="card-label">適合族群</p>
+                        <h3>學生建議</h3>
+                        <p>{{ listing_analysis.suitable_student_type }}</p>
                     </div>
 
                     <div class="card">
                         <p class="card-label">天氣</p>
-                        <h3>{{ ai_result.weather.weather }}</h3>
-                        <p>{{ ai_result.weather.summary }}</p>
-                    </div>
-
-                    <div class="card">
-                        <p class="card-label">空氣品質</p>
-                        <h3>{{ ai_result.air_quality.level }}</h3>
-                        <p>{{ ai_result.air_quality.summary }}</p>
+                        <h3>{{ listing_analysis.area_analysis.weather.weather }}</h3>
+                        <p>{{ listing_analysis.area_analysis.weather.summary }}</p>
                     </div>
 
                 </div>
 
-                <!-- AI 摘要 -->
-                <div class="analysis-panel">
-                    <h2>AI 整體建議</h2>
-                    <p>{{ ai_result.ai_analysis.summary }}</p>
-                    <p>{{ ai_result.ai_analysis.suggestion }}</p>
-                </div>
+                <!-- 優點與風險 -->
+                <section class="details-grid listing-ai-grid">
 
-                <!-- 租金合理性：用房源租金與估算範圍做簡單提醒 -->
-                <div class="detail-card">
-                    <h3>租金合理性提醒</h3>
-                    <p>
-                        此房源租金為
-                        <strong>NT$ {{ "{:,}".format(listing.rent) }} / 月</strong>。
-                        依目前中央大學周邊 MVP 租金資料，
-                        此生活圈分租套房估計約為
-                        <strong>{{ ai_result.rental.studio_range }}</strong>，
-                        獨立套房估計約為
-                        <strong>{{ ai_result.rental.independent_studio_range }}</strong>。
-                    </p>
-                    <p class="source-text">
-                        {{ ai_result.rental.note }}
-                    </p>
-                </div>
+                    <div class="detail-card">
+                        <h3>這間房源的優點</h3>
+                        <ul>
+                            {% for item in listing_analysis.strengths %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="detail-card">
+                        <h3>可能風險與注意事項</h3>
+                        <ul>
+                            {% for item in listing_analysis.risks %}
+                            <li>{{ item }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="detail-card wide-ai-card">
+                        <h3>看房時建議詢問房東</h3>
+                        <ul>
+                            {% for question in listing_analysis.questions %}
+                            <li>{{ question }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="detail-card wide-ai-card">
+                        <h3>租金參考資料</h3>
+                        <p>
+                            此生活圈 {{ listing.room_type }} 租金估算資料：
+                        </p>
+
+                        {% if listing.room_type == "雅房" %}
+                            <p><strong>{{ listing_analysis.area_analysis.rental.room_range }}</strong></p>
+                        {% elif listing.room_type == "分租套房" %}
+                            <p><strong>{{ listing_analysis.area_analysis.rental.studio_range }}</strong></p>
+                        {% elif listing.room_type == "獨立套房" %}
+                            <p><strong>{{ listing_analysis.area_analysis.rental.independent_studio_range }}</strong></p>
+                        {% elif listing.room_type == "整層合租" %}
+                            <p><strong>{{ listing_analysis.area_analysis.rental.shared_apartment_range }}</strong></p>
+                        {% else %}
+                            <p><strong>目前缺少此房型租金資料。</strong></p>
+                        {% endif %}
+
+                        <p class="source-text">
+                            {{ listing_analysis.area_analysis.rental.note }}
+                        </p>
+                    </div>
+
+                </section>
 
             {% else %}
 
                 <div class="analysis-panel">
                     <h2>AI 分析暫時無法取得</h2>
                     <p>
-                        目前無法根據此房源地址產生 AI 分析。請稍後再試，或確認地址是否足夠明確。
+                        目前無法根據此房源資料產生 AI 分析。
+                        請稍後再試，或確認地址是否足夠明確。
                     </p>
                 </div>
 

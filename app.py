@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
-from agent_service import run_agent, chat_with_agent
+from agent_service import run_agent, chat_with_agent, analyze_listing
 from database import get_db_connection
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -87,17 +87,17 @@ def listing_detail(listing_id):
     # run_agent() 會做：
     # Geocoding -> Weather -> Commute -> Rental -> Summary
     try:
-        ai_result = run_agent(listing_data["address"])
+        # 使用新版 analyze_listing()
+        # 它不只分析地址，還會分析租金、房型、設備、水電與看房風險
+        listing_analysis = analyze_listing(listing_data)
     except Exception as e:
-        # 如果 AI 分析失敗，不要讓整個房源頁壞掉
-        # 先印出錯誤，然後前端顯示資料不足
         print("Listing AI analysis error:", e)
-        ai_result = None
+        listing_analysis = None
 
     return render_template(
         "listing_detail.html",
         listing=listing_data,
-        ai_result=ai_result
+        listing_analysis=listing_analysis
     )
 
 @app.route("/landlord/new", methods=["GET", "POST"])
