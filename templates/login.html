@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 | Happy Rent Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">Happy Rent Agent</div>
+
+        <div class="nav-links">
+            <a href="/">首頁</a>
+            <a href="/listings">找房源</a>
+            <a href="/register">註冊</a>
+        </div>
+    </nav>
+
+    <main class="auth-container">
+
+        <section class="auth-card">
+            <p class="tag dark-tag">Login</p>
+            <h1>登入</h1>
+            <p class="auth-subtitle">
+                登入後，找房者可以瀏覽房源，房東可以上架與管理自己的空房間。
+            </p>
+
+            {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/login">
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密碼</label>
+                    <input id="password" name="password" type="password" required>
+                </div>
+
+                <button type="submit" class="submit-button full-button">
+                    登入
+                </button>
+            </form>
+
+            <p class="auth-bottom-text">
+                還沒有帳號？
+                <a href="/register">前往註冊</a>
+            </p>
+        </section>
+
+    </main>
+
+</body>
+</html>

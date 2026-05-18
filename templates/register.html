@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>註冊 | Happy Rent Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">Happy Rent Agent</div>
+
+        <div class="nav-links">
+            <a href="/">首頁</a>
+            <a href="/listings">找房源</a>
+            <a href="/login">登入</a>
+        </div>
+    </nav>
+
+    <main class="auth-container">
+
+        <section class="auth-card">
+            <p class="tag dark-tag">Create Account</p>
+            <h1>註冊帳號</h1>
+            <p class="auth-subtitle">
+                請選擇你的身份。找房者可以搜尋房源，房東可以上架空房間。
+            </p>
+
+            {% if error %}
+            <div class="error-box">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/register">
+
+                <div class="form-group">
+                    <label for="name">姓名</label>
+                    <input id="name" name="name" type="text" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">密碼</label>
+                    <input id="password" name="password" type="password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="role">身份</label>
+                    <select id="role" name="role" required>
+                        <option value="">請選擇身份</option>
+                        <option value="student">我是找房者 / 學生</option>
+                        <option value="landlord">我是房東</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="submit-button full-button">
+                    註冊
+                </button>
+            </form>
+
+            <p class="auth-bottom-text">
+                已經有帳號？
+                <a href="/login">前往登入</a>
+            </p>
+        </section>
+
+    </main>
+
+</body>
+</html>

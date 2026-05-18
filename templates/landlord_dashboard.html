@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>房東後台 | Happy Rent Agent</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-brand">Happy Rent Agent</div>
+
+        <div class="nav-links">
+            <a href="/">首頁</a>
+            <a href="/listings">找房源</a>
+            <a href="/landlord/new">新增房源</a>
+            <a href="/logout">登出</a>
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <section class="form-hero">
+            <p class="tag dark-tag">Landlord Dashboard</p>
+            <h1>房東後台</h1>
+            <p>
+                你可以在這裡管理自己上架的中央大學周邊房源。
+            </p>
+
+            <div class="hero-actions light-actions">
+                <a href="/landlord/new" class="primary-link">
+                    新增房源
+                </a>
+            </div>
+        </section>
+
+        <section class="listing-count">
+            你目前共有 <strong>{{ listings|length }}</strong> 筆房源
+        </section>
+
+        <section class="listing-grid">
+
+            {% for listing in listings %}
+            <article class="listing-card">
+                <div class="listing-image-wrap">
+                    <img
+                        src="{{ listing.image_url }}"
+                        alt="{{ listing.title }}"
+                        class="listing-image"
+                    >
+                </div>
+
+                <div class="listing-content">
+                    <div class="listing-topline">
+                        <span class="area-badge">{{ listing.area }}</span>
+                        <span class="room-badge">{{ listing.room_type }}</span>
+                    </div>
+
+                    <h2>{{ listing.title }}</h2>
+
+                    <p class="listing-address">
+                        {{ listing.address }}
+                    </p>
+
+                    <p class="listing-rent">
+                        NT$ {{ "{:,}".format(listing.rent) }} / 月
+                    </p>
+
+                    <p class="listing-description">
+                        狀態：{{ listing.status }}
+                    </p>
+
+                    <div class="listing-actions">
+                        <a class="primary-link" href="/listings/{{ listing.id }}">
+                            查看詳情
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+
+            {% if listings|length == 0 %}
+            <div class="empty-state">
+                <h2>目前還沒有上架房源</h2>
+                <p>點擊「新增房源」開始上架你的第一間空房間。</p>
+            </div>
+            {% endif %}
+
+        </section>
+
+    </main>
+
+</body>
+</html>

@@ -1,9 +1,13 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from agent_service import run_agent, chat_with_agent
 from database import get_db_connection
+from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-
+# Flask session 需要 secret_key 才能運作
+# session 可以用來記錄目前登入的使用者是誰
+# 注意：正式上線時不要把 secret key 寫死在程式裡，應該放在 .env
+app.secret_key = "happy-rent-dev-secret-key"
 
 @app.route("/")
 def home():
@@ -98,6 +102,13 @@ def listing_detail(listing_id):
 
 @app.route("/landlord/new", methods=["GET", "POST"])
 def new_listing():
+    # 房東上架前，必須先登入
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    # 只有房東身份可以上架房源
+    if session.get("user_role") != "landlord":
+        return "你不是房東身份，無法上架房源。", 403
     """
     房東新增房源頁。
 
@@ -169,7 +180,9 @@ def new_listing():
 
     # 目前還沒有正式登入系統，所以 landlord_id 先用 1
     # 之後做登入後，會改成 session["user_id"]
-    landlord_id = 1
+    # 使用目前登入的房東 user_id 作為 landlord_id
+    # 這樣每筆房源都會知道是誰上架的
+    landlord_id = session["user_id"]
 
     conn.execute("""
         INSERT INTO listings (
@@ -246,6 +259,189 @@ def analyze_area():
     except Exception as e:
         print("Analyze error:", e)
         return jsonify({"error": "分析時發生錯誤，請稍後再試。"}), 500
+
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """
+    使用者註冊頁。
+
+    GET：
+    - 顯示註冊表單
+
+    POST：
+    - 取得使用者填寫的 name / email / password / role
+    - 檢查 email 是否已經存在
+    - 將密碼加密後存入 users table
+    - 註冊成功後導到 login 頁
+    """
+
+    # GET request：顯示註冊頁面
+    if request.method == "GET":
+        return render_template("register.html")
+
+    # POST request：處理註冊資料
+    name = request.form.get("name", "").strip()
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "").strip()
+    role = request.form.get("role", "").strip()
+
+    # 基本欄位檢查
+    if not name or not email or not password or not role:
+        return render_template(
+            "register.html",
+            error="請完整填寫姓名、Email、密碼與身份。"
+        )
+
+    # 只允許 student / landlord 兩種身份
+    if role not in ["student", "landlord"]:
+        return render_template(
+            "register.html",
+            error="身份選擇不正確。"
+        )
+
+    conn = get_db_connection()
+
+    # 檢查 email 是否已經被註冊
+    existing_user = conn.execute(
+        "SELECT id FROM users WHERE email = ?",
+        (email,)
+    ).fetchone()
+
+    if existing_user:
+        conn.close()
+        return render_template(
+            "register.html",
+            error="這個 Email 已經被註冊過了。"
+        )
+
+    # 密碼不要明文存進資料庫
+    # generate_password_hash 會把密碼轉成 hash
+    password_hash = generate_password_hash(password)
+
+    # 寫入 users table
+    conn.execute("""
+        INSERT INTO users (name, email, password, role)
+        VALUES (?, ?, ?, ?)
+    """, (name, email, password_hash, role))
+
+    conn.commit()
+    conn.close()
+
+    # 註冊成功後導到登入頁
+    return redirect(url_for("login"))
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """
+    使用者登入頁。
+
+    GET：
+    - 顯示登入表單
+
+    POST：
+    - 根據 email 找使用者
+    - 檢查密碼是否正確
+    - 登入成功後，把 user_id / role / name 存進 session
+    - 根據身份導到不同頁面
+    """
+
+    # GET request：顯示登入頁面
+    if request.method == "GET":
+        return render_template("login.html")
+
+    # POST request：處理登入資料
+    email = request.form.get("email", "").strip()
+    password = request.form.get("password", "").strip()
+
+    if not email or not password:
+        return render_template(
+            "login.html",
+            error="請輸入 Email 和密碼。"
+        )
+
+    conn = get_db_connection()
+
+    # 根據 email 查使用者
+    user = conn.execute(
+        "SELECT * FROM users WHERE email = ?",
+        (email,)
+    ).fetchone()
+
+    conn.close()
+
+    # 如果找不到使用者
+    if user is None:
+        return render_template(
+            "login.html",
+            error="Email 或密碼錯誤。"
+        )
+
+    # 檢查密碼
+    # check_password_hash(資料庫裡的 hash, 使用者輸入的密碼)
+    if not check_password_hash(user["password"], password):
+        return render_template(
+            "login.html",
+            error="Email 或密碼錯誤。"
+        )
+
+    # 登入成功，把使用者資訊存進 session
+    # session 可以讓後端知道目前是誰登入
+    session["user_id"] = user["id"]
+    session["user_name"] = user["name"]
+    session["user_role"] = user["role"]
+
+    # 根據身份導向不同頁面
+    if user["role"] == "landlord":
+        return redirect(url_for("landlord_dashboard"))
+
+    return redirect(url_for("listings"))
+@app.route("/logout")
+def logout():
+    """
+    使用者登出。
+
+    session.clear() 會清掉所有登入狀態。
+    """
+
+    session.clear()
+    return redirect(url_for("home"))
+
+@app.route("/landlord/dashboard")
+def landlord_dashboard():
+    """
+    房東後台。
+
+    功能：
+    - 只有房東可以進入
+    - 顯示目前登入房東自己上架的房源
+    """
+
+    # 檢查是否登入
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+
+    # 檢查身份是否為房東
+    if session.get("user_role") != "landlord":
+        return "你不是房東身份，無法進入房東後台。", 403
+
+    conn = get_db_connection()
+
+    # 只查目前登入房東自己的房源
+    rows = conn.execute("""
+        SELECT *
+        FROM listings
+        WHERE landlord_id = ?
+        ORDER BY created_at DESC
+    """, (session["user_id"],)).fetchall()
+
+    conn.close()
+
+    listings = [dict(row) for row in rows]
+
+    return render_template(
+        "landlord_dashboard.html",
+        listings=listings
+    )
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
