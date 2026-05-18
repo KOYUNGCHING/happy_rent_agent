@@ -1,83 +1,9 @@
-def geocode_location(location_name):
-    """
-    Fake geocoding function for MVP.
-    Later this can be replaced by OpenStreetMap / Nominatim or Google Geocoding API.
-    """
-    return {
-        "location_name": location_name,
-        "latitude": 25.0478,
-        "longitude": 121.5170,
-        "city": "台北市",
-        "district": "中正區"
-    }
-
-
-def get_weather(latitude, longitude):
-    """
-    Fake weather data for MVP.
-    Later this can be replaced by Central Weather Administration API.
-    """
-    return {
-        "temperature": "31°C",
-        "weather": "多雲",
-        "rain_probability": "20%",
-        "summary": "今日天氣偏熱，降雨機率低，外出看房影響不大。"
-    }
-
-
-def get_air_quality(latitude, longitude):
-    """
-    Fake air quality data for MVP.
-    Later this can be replaced by air quality open data.
-    """
-    return {
-        "aqi": 68,
-        "level": "普通",
-        "pm25": "18 μg/m³",
-        "summary": "空氣品質普通，對一般族群影響不大，但敏感族群仍需注意。"
-    }
-
-
-def get_transport_info(latitude, longitude):
-    """
-    Fake transport data for MVP.
-    Later this can be replaced by TDX API or Google Maps API.
-    """
-    return {
-        "metro_stations": ["台北車站", "北門站"],
-        "bus_stop_count": 12,
-        "youbike_station_count": 8,
-        "transport_score": 95,
-        "summary": "交通非常便利，有捷運、火車、高鐵與多條公車路線。"
-    }
-
-
-def get_facilities(latitude, longitude):
-    """
-    Fake facility data for MVP.
-    Later this can be replaced by Google Places API or OpenStreetMap Overpass API.
-    """
-    return {
-        "convenience_stores": 15,
-        "restaurants": 80,
-        "clinics": 10,
-        "parks": 2,
-        "facility_score": 90,
-        "summary": "生活機能完整，外食、採買與醫療資源都很方便。"
-    }
-
-
-def get_rental_data(city, district):
-    """
-    Fake rental data for MVP.
-    Later this can be replaced by rental open data or a custom dataset.
-    """
-    return {
-        "rental_level": "偏高",
-        "studio_range": "18,000 - 28,000 元/月",
-        "shared_room_range": "10,000 - 16,000 元/月",
-        "summary": "此區因交通便利與商業活動密集，租金通常偏高。"
-    }
+from tools.geocode_tool import geocode_location
+from tools.weather_tool import get_weather
+from tools.air_quality_tool import get_air_quality
+from tools.transport_tool import get_transport_info
+from tools.facility_tool import get_facilities
+from tools.rental_tool import get_rental_data
 
 
 def summarize_area(location, weather, air_quality, transport, facilities, rental):
